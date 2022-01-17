@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content='width=device-width initial-scale=1.0'>
+    <title>Covid-19 Screener</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel = "stylesheet" href = 'index.css'>
+</head>
+<body class = 'container'>
+   
+    <main>
+        <div class = 'container'>
+            <h1 class = 'text-center mt-5'>
+              Covid-19 screener
+            </h1>
+          <form class = 'text-center mt-5' autocomplete="on">
+            <h2 id = 'header1'>Please enter a country you'd like to analyze covid-19 data</h2>
+                <div>
+                    <input type = 'text' id ='myText'>
+                    <button type = 'button' id = 'myButton'>Submit</button>
+                </div>
+              
+          </form>
+          </div>
+          <div>
+            <br id = 'br1'>
+            <p id = 'result'></p>
+          </div>
+          <div>
+            <table class = 'table table-hover'>
+              <thead>
+                <tr>
+                  <th>Total Confirmed</th>
+                  <th>Total Recovered</th>
+                  <th>Total Deaths</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td id = 'Confirmed'></td>
+                  <td id = 'recovered'></td>
+                  <td id = 'deaths'></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </br id = 'brk1'>
+          <div><canvas id="myChart" content='width=device-width initial-scale=1.0' height = '800px' width = '800px'></canvas></div>
+    </main>
+    <script>
+        
+
+const api = "https://api.covid19api.com/summary";
+const country = 'Canada'
+
+
+
+
+document.getElementById('myButton').onclick = function() {
+    const country1 = document.getElementById('myText').value.toLowerCase();
+    const country = country1.charAt(0).toUpperCase() + country1.slice(1);
+    if (country !== undefined) {
+        data2(country);
+        document.getElementById('result').innerHTML = `Current Covid-19 data for ${country}`;
+    } else {
+        document.getElementById('result').innerHTML = `Invalid Country`;
+    } 
+}
+
+
+async function data2(country){
+    const covidData1 = await fetch(`${api}`)
+    const covidData2 = await covidData1.json()
+    const covidData = covidData2.Countries;
+    const index = covidData.findIndex(x => x.Country === `${country}`)
+    const finalDatatotalConfirmed = covidData[index].TotalConfirmed
+    const finalDatatotalDeaths = covidData[index].TotalDeaths
+    const finalDatatotalRecovered = finalDatatotalConfirmed - finalDatatotalDeaths
+
+
+    document.getElementById('Confirmed').innerHTML = `<td>${finalDatatotalConfirmed}</td>`; 
+    document.getElementById('recovered').innerHTML = `<td>${finalDatatotalRecovered}</td>`;
+    document.getElementById('deaths').innerHTML = `<td>${finalDatatotalDeaths}</td>`;
+
+
+    
+   
+    const ctx = document.getElementById('myChart').getContext('2d');
+       
+        
+            const myChart = new Chart(ctx, {
+                type: 'pie',
+                type :'doughnut',
+                data: {
+                    labels: ['Total Confirmed', 'Total Recovered', 'Total Deaths'],
+                    datasets: [{
+                        
+                        data: [finalDatatotalConfirmed, finalDatatotalRecovered, finalDatatotalDeaths ],
+                        backgroundColor: ['rgb(25,218,179)', 'rgb(219,213,33)', 'rgb(196,102,102)'],
+                    // }, {
+                    //     label: 'Total Recovered',
+                    //     data: [0, finalDatatotalRecovered],
+                    //     backgroundColor: ['yellow'],
+                    //  }, {
+                    //     label: 'Total Deaths',
+                    //     data: [0,finalDatatotalDeaths],
+                    //     backgroundColor: ['red'],
+                    // }
+                    }]
+                    },
+                    options: { 
+                        maintainAspectRatio: false,
+                        
+                        
+                    }
+                }); 
+    }
+            
+        </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+</body>
+</html>
