@@ -1,0 +1,17 @@
+
+
+
+.container {
+    background-color: rgba(163, 70, 70, 0.5);
+}
+ 
+
+#result{
+    text-align: center;
+    font-size: 25px;
+}
+
+#br1 {
+    height: 100px;
+    width: 100px;
+}
